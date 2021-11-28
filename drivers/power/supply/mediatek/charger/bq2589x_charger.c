@@ -120,7 +120,7 @@ bool cdp_detect = false;
 
 static int charger_detect_count = 3;
 /* Huaqin add for HQ-134476 by miaozhichao at 2021/5/29 end */
-int get_charger_type()
+int get_charger_type(void)
 {
 	return g_charger_type;
 }
