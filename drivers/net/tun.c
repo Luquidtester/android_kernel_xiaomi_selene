@@ -1,6 +1,7 @@
 /*
  *  TUN - Universal TUN/TAP device driver.
  *  Copyright (C) 1999-2002 Maxim Krasnyansky <maxk@qualcomm.com>
+ *  Copyright (C) 2021 XiaoMi, Inc.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -1506,6 +1507,16 @@ drop:
 		this_cpu_inc(tun->pcpu_stats->rx_frame_errors);
 		kfree_skb(skb);
 		return -EINVAL;
+	}
+
+	//gro on: clatd checksum fail patch
+	//if is nornal and gro packet, not calculate tcp's checksum
+	if (pi.flags & htons(0xF000)) {  //this is normal packet or GRO packet
+		skb->ip_summed = CHECKSUM_UNNECESSARY;
+		if (pi.flags & htons(0x0F00)) {  //this is GRO packet
+			skb_shinfo(skb)->gso_size = 1;
+			skb_shinfo(skb)->gso_type = 1;
+		}
 	}
 
 	switch (tun->flags & TUN_TYPE_MASK) {

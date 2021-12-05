@@ -1050,7 +1050,9 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
 				ret = 0;
 				ms = 8LL * 1000LL * xfer->len;
 				do_div(ms, xfer->speed_hz);
-				ms += ms + 200; /* some tolerance */
+				/* Increase spi transfer tolerance to 2s */
+				/* To aviod timeout when OS is busy.*/
+				ms += 2000;
 
 				if (ms > UINT_MAX)
 					ms = UINT_MAX;
@@ -1304,8 +1306,20 @@ static int spi_init_queue(struct spi_controller *ctlr)
 	ctlr->busy = false;
 
 	kthread_init_worker(&ctlr->kworker);
-	ctlr->kworker_task = kthread_run(kthread_worker_fn, &ctlr->kworker,
+	/* Huaqin modify for HQ-131657 by liunianliang at 2021/06/03 start */
+	if (strcmp(dev_name(&ctlr->dev), "spi5") != 0) {
+		ctlr->kworker_task = kthread_run(kthread_worker_fn, &ctlr->kworker,
 					 "%s", dev_name(&ctlr->dev));
+	} else {
+		#define CPU6 6
+		ctlr->kworker_task = kthread_create_on_cpu(kthread_worker_fn, &ctlr->kworker,
+					CPU6, dev_name(&ctlr->dev));
+		if (!IS_ERR(ctlr->kworker_task)) {
+			wake_up_process(ctlr->kworker_task);
+		}
+	}
+	/* Huaqin modify for HQ-131657 by liunianliang at 2021/06/03 end */
+
 	if (IS_ERR(ctlr->kworker_task)) {
 		dev_err(&ctlr->dev, "failed to create message pump task\n");
 		return PTR_ERR(ctlr->kworker_task);
@@ -1620,7 +1634,8 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
 		return rc;
 	}
 	spi->max_speed_hz = value;
-
+	printk("[%s]: lyd_spi, spi name = %s\n", __func__, nc->name);
+	printk("[%s]: lyd_spi, spi speed = %d\n", __func__, value);
 	return 0;
 }
 
@@ -2775,7 +2790,20 @@ int spi_setup(struct spi_device *spi)
 	if (spi->controller->setup)
 		status = spi->controller->setup(spi);
 
-	spi_set_cs(spi, false);
+	if (spi->master->auto_runtime_pm && spi->master->set_cs) {
+		status = pm_runtime_get_sync(spi->master->dev.parent);
+		if (status < 0) {
+			pm_runtime_put_noidle(spi->master->dev.parent);
+			dev_err(&spi->dev, "Failed to power device: %d\n",
+				status);
+			return status;
+		}
+		spi_set_cs(spi, false);
+		pm_runtime_mark_last_busy(spi->master->dev.parent);
+		pm_runtime_put_autosuspend(spi->master->dev.parent);
+	} else {
+		spi_set_cs(spi, false);
+	}
 
 	dev_dbg(&spi->dev, "setup mode %d, %s%s%s%s%u bits/w, %u Hz max --> %d\n",
 			(int) (spi->mode & (SPI_CPOL | SPI_CPHA)),
