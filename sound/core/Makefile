@@ -2,6 +2,7 @@
 #
 # Makefile for ALSA
 # Copyright (c) 1999,2001 by Jaroslav Kysela <perex@perex.cz>
+# Copyright (C) 2021 XiaoMi, Inc.
 #
 
 snd-y     := sound.o init.o memory.o control.o misc.o device.o
@@ -48,4 +49,5 @@ obj-$(CONFIG_SND_RAWMIDI)	+= snd-rawmidi.o
 obj-$(CONFIG_SND_OSSEMUL)	+= oss/
 obj-$(CONFIG_SND_SEQUENCER)	+= seq/
 
-obj-$(CONFIG_SND_COMPRESS_OFFLOAD)	+= snd-compress.o
+#obj-$(CONFIG_SND_COMPRESS_OFFLOAD)	+= snd-compress.o
+obj-y	+= snd-compress.o
