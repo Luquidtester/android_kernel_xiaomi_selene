@@ -2,6 +2,7 @@
  * Compressed RAM block device
  *
  * Copyright (C) 2008, 2009, 2010  Nitin Gupta
+ * Copyright (C) 2021 XiaoMi, Inc.
  *               2012, 2013 Minchan Kim
  *
  * This code is released using a dual license strategy: BSD/GPL
@@ -127,4 +128,7 @@ struct zram {
 	struct dentry *debugfs_dir;
 #endif
 };
+
+/* mlog */
+unsigned long zram_mlog(void);
 #endif
