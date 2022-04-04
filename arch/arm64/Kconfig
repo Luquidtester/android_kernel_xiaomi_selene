@@ -888,7 +888,6 @@ config ARM64_SSBD
 
 	  If unsure, say Y.
 
-<<<<<<< HEAD
 config ARM64_TAGGED_ADDR_ABI
 	bool "Enable the tagged user addresses syscall ABI"
 	default y
@@ -897,7 +896,7 @@ config ARM64_TAGGED_ADDR_ABI
 	  relaxed ABI via prctl() allowing tagged addresses to be passed
 	  to system calls as pointer arguments. For details, see
 	  Documentation/arm64/tagged-address-abi.rst.
-=======
+
 config MITIGATE_SPECTRE_BRANCH_HISTORY
 	bool "Mitigate Spectre style attacks against branch history" if EXPERT
 	default y
@@ -907,7 +906,6 @@ config MITIGATE_SPECTRE_BRANCH_HISTORY
 	  make use of branch history to influence future speculation.
 	  When taking an exception from user-space, a sequence of branches
 	  or a firmware call overwrites the branch history.
->>>>>>> 74766a973637a02c32c04c1c6496e114e4855239
 
 menuconfig ARMV8_DEPRECATED
 	bool "Emulate deprecated/obsolete ARMv8 instructions"
