@@ -4458,7 +4458,6 @@ unsigned int mtk_dsi_get_dsc_compress_rate(struct mtk_dsi *dsi)
  * MM Clock
  * DSC on:  vact x hact x vrefresh x  (vtotal / vact)
  * DSC off: vact x hact x vrefresh x (vtotal x htotal) / (vact x hact)
-
  * In Command Mode Using the Formula below:
  * Type     | MM Clock (unit: Pixel)
  * CPHY     | data_rate x (16/7) x lane_num x compress_ratio / bpp
