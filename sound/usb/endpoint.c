@@ -1334,4 +1334,3 @@ void snd_usb_handle_sync_urb(struct snd_usb_endpoint *ep,
 		ep->freqshift = INT_MIN;
 	}
 }
-
