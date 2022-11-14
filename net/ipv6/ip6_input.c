@@ -102,10 +102,6 @@ static void ip6_list_rcv_finish(struct net *net, struct sock *sk,
 		 * skb to its handler for processing
 		 */
 		skb = l3mdev_ip6_rcv(skb);
-		if (!skb)
-			continue;
-		ip6_rcv_finish_core(net, sk, skb);
-		dst = skb_dst(skb);
 		if (curr_dst != dst) {
 			/* dispatch old sublist */
 			if (!list_empty(&sublist))
