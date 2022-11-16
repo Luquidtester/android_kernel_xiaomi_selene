@@ -179,8 +179,6 @@ unsigned long ext_fb_pa;
 unsigned int ext_lcd_fps = 6000;
 char ext_mtkfb_lcm_name[256] = { 0 };
 #endif
-/* Huaqin modify for HQ-141505 by caogaojie at 2021/06/18 start */
-int real_refresh;
 /* Huaqin modify for HQ-141505 by caogaojie at 2021/06/18 end */
 DEFINE_SEMAPHORE(sem_flipping);
 DEFINE_SEMAPHORE(sem_early_suspend);
@@ -368,12 +366,12 @@ static ssize_t mtkfb_set_wpoint_level(struct device *dev, struct device_attribut
 static ssize_t mtkfb_get_refresh(struct device *dev, struct device_attribute *attr, char *buf)
 {
 	int ret;
-	ret = scnprintf(buf, PAGE_SIZE, "%3d\n", real_refresh);
+	ret = scnprintf(buf, PAGE_SIZE, "%3d\n");
 	return ret;
 }
 static ssize_t mtkfb_set_refresh(struct device *dev, struct device_attribute *attr, const char *buf, size_t len)
 {
-		sscanf(buf, "%3d", &real_refresh);
+		sscanf(buf, "%3d");
 		return len;
 }
 /* Huaqin modify for HQ-141505 by caogaojie at 2021/06/18 end */
